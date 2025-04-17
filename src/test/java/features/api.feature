@@ -1,4 +1,25 @@
 Feature: Test Automation Rest Api
 
-  Scenario: Test get list data normal
-    Given prepare url valid for get list data
+  @api
+  Scenario: Login with valid username and password
+    Given user is on login page
+    When user input username with "standard_user"
+    And user input password with "secret_sauce"
+    And user click login button
+    Then user will redirect to homepage
+
+  @api
+  Scenario: Login with invalid username and password
+    Given user is on login page
+    When user input username with "user_lain"
+    And user input password with "coba_coba"
+    And user click login button
+    Then user will redirect to homepage
+
+  @api
+  Scenario: Login with empty password
+    Given user is on login page
+    When user input username with "standard_user"
+    And user input password with ""
+    And user click login button
+    Then A message appears "Password is required"
