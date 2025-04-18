@@ -1,3 +1,5 @@
+package stepDef;
+
 import io.cucumber.java.en.Given;
 import pages.ApiPage;
 
