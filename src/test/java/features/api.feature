@@ -14,7 +14,7 @@ Feature: Test Automation Rest Api
     When user input username with "user_lain"
     And user input password with "coba_coba"
     And user click login button
-    Then user will redirect to homepage
+    Then A message appears "Username and password do not match any user in this service"
 
   @api
   Scenario: Login with empty password
