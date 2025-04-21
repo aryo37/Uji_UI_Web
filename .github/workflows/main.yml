@@ -8,12 +8,15 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
-
+  build-and-test:
     runs-on: ubuntu-latest
     
     steps:
     - uses: actions/checkout@v4
+
+    - name: Make gradlew executable
+      run: chmod +x gradlew
+      
     - name: Set up JDK 17
       uses: actions/setup-java@v4
       with:
@@ -21,37 +24,12 @@ jobs:
         distribution: 'temurin'
 
     - name: Setup Gradle
-      uses: gradle/actions/setup-gradle@v4
+      uses: gradle/actions/setup-gradle@v3
       with:
         cache-read-only: false
 
     - name: Build with Gradle
       run: ./gradlew build
-
-    # NOTE: The Gradle Wrapper is the default and recommended way to run Gradle (https://docs.gradle.org/current/userguide/gradle_wrapper.html).
-    # If your project does not have the Gradle Wrapper configured, you can use the following configuration to run Gradle with a specified version.
-    #
-    # - name: Setup Gradle
-    #   uses: gradle/actions/setup-gradle@af1da67850ed9a4cedd57bfd976089dd991e2582 # v4.0.0
-    #   with:
-    #     gradle-version: '8.9'
-    #
-    # - name: Build with Gradle 8.9
-    #   run: gradle build
-
-  dependency-submission:
-
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-
-    steps:
-    - uses: actions/checkout@v4
-    - name: Set up JDK 17
-      uses: actions/setup-java@v4
-      with:
-        java-version: '17'
-        distribution: 'temurin'
 
     - name: Setup Chrome
       uses: browser-actions/setup-chrome@v1
@@ -59,16 +37,32 @@ jobs:
         chrome-version: 'latest'
         install-dependencies: true
 
-  #Execute gradle command for running cucumber test
-    - name: Execute Test
+    - name: Execute Cucumber Tests
       run: ./gradlew cucumber
+      env:
+        HEADLESS_MODE: true
 
     - name: Upload Test Reports
       if: always()
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: test-reports
         path: |
           build/reports/tests/
           build/test-results/
-          
+
+  dependency-submission:
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+    - name: Generate dependency graph
+      uses: gradle/actions/dependency-submission@v3
