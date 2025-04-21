@@ -47,9 +47,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: test-reports
-        path: |
-          build/reports/tests/
-          build/test-results/
+        path: reports
 
   dependency-submission:
     needs: build-and-test
@@ -66,3 +64,19 @@ jobs:
         distribution: 'temurin'
     - name: Generate dependency graph
       uses: gradle/actions/dependency-submission@v3
+
+  deploy-docs:
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'  # Only deploy from main branch
+    
+    steps:
+    - uses: actions/checkout@v4
+    - name: Setup Pages
+      uses: actions/configure-pages@v4
+    - name: Upload artifact
+      uses: actions/upload-pages-artifact@v2
+      with:
+        path: reports
+    - name: Deploy to GitHub Pages
+      uses: actions/deploy-pages@v4
