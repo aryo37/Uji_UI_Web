@@ -20,12 +20,12 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
 
-    # Configure Gradle for optimal use in GitHub Actions, including caching of downloaded dependencies.
-    # See: https://github.com/gradle/actions/blob/main/setup-gradle/README.md
     - name: Setup Gradle
-      uses: gradle/actions/setup-gradle@af1da67850ed9a4cedd57bfd976089dd991e2582 # v4.0.0
+      uses: gradle/actions/setup-gradle@v4
+      with:
+        cache-read-only: false
 
-    - name: Build with Gradle Wrapper
+    - name: Build with Gradle
       run: ./gradlew build
 
     # NOTE: The Gradle Wrapper is the default and recommended way to run Gradle (https://docs.gradle.org/current/userguide/gradle_wrapper.html).
@@ -53,23 +53,22 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
 
-    # Generates and submits a dependency graph, enabling Dependabot Alerts for all project dependencies.
-    # See: https://github.com/gradle/actions/blob/main/dependency-submission/README.md
-    - name: Generate and submit dependency graph
-      uses: gradle/actions/dependency-submission@af1da67850ed9a4cedd57bfd976089dd991e2582 # v4.0.0
-
-            - name: Setup Chrome
- 
-  uses: browser-actions/setup-chrome@v1.7.3
-  with:
-  
-    chrome-version: # optional, default is latest
-      install-dependencies: # optional
-  
-    install-chromedriver: # optional
-      no-sudo: # optional
+    - name: Setup Chrome
+      uses: browser-actions/setup-chrome@v1
+      with:
+        chrome-version: 'latest'
+        install-dependencies: true
 
   #Execute gradle command for running cucumber test
-  - name: Execute Test
-    run: ./gradlew cucumber
+    - name: Execute Test
+      run: ./gradlew cucumber
+
+    - name: Upload Test Reports
+      if: always()
+      uses: actions/upload-artifact@v3
+      with:
+        name: test-reports
+        path: |
+          build/reports/tests/
+          build/test-results/
           
