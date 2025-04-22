@@ -1,0 +1,4 @@
+$(document).ready(function() {
+CucumberHTML.timelineItems.pushArray([{"id":"3c559941-24a1-458b-bb0d-c3b2ef69acb9","feature":"Test Automation Rest Api","scenario":"Login with valid username and password","start":1745101292788,"group":1,"content":"","tags":"@api,","end":1745101301940,"className":"passed"},{"id":"15153923-113e-4eb3-8e90-74991d22d969","feature":"Test Automation Rest Api","scenario":"Login with empty password","start":1745101306662,"group":1,"content":"","tags":"@api,","end":1745101311090,"className":"passed"},{"id":"e688703d-fd7b-4bc3-a691-6a9cc39477eb","feature":"Test Automation Rest Api","scenario":"Login with invalid username and password","start":1745101301960,"group":1,"content":"","tags":"@api,","end":1745101306657,"className":"passed"}]);
+CucumberHTML.timelineGroups.pushArray([{"id":1,"content":"Thread[#1,Test worker,5,main]"}]);
+});

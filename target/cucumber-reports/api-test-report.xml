@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="Cucumber" time="18.732" tests="3" skipped="0" failures="0" errors="0" timestamp="2025-04-19T22:21:32.358196200Z">
+<testcase classname="Test Automation Rest Api" name="Login with valid username and password" time="9.152">
+<system-out><![CDATA[
+Given user is on login page.................................................passed
+When user input username with "standard_user"...............................passed
+And user input password with "secret_sauce".................................passed
+And user click login button.................................................passed
+Then user will redirect to homepage.........................................passed
+]]></system-out>
+</testcase>
+<testcase classname="Test Automation Rest Api" name="Login with invalid username and password" time="4.697">
+<system-out><![CDATA[
+Given user is on login page.................................................passed
+When user input username with "user_lain"...................................passed
+And user input password with "coba_coba"....................................passed
+And user click login button.................................................passed
+Then A message appears "Username and password do not match any user in this service".passed
+]]></system-out>
+</testcase>
+<testcase classname="Test Automation Rest Api" name="Login with empty password" time="4.427">
+<system-out><![CDATA[
+Given user is on login page.................................................passed
+When user input username with "standard_user"...............................passed
+And user input password with "".............................................passed
+And user click login button.................................................passed
+Then A message appears "Password is required"...............................passed
+]]></system-out>
+</testcase>
+</testsuite>
