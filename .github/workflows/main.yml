@@ -5,11 +5,7 @@ on:
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
-
-Permissions:
-  contents: read
-  pages: write
-  id-token: write
+  workflow_dispatch:
 
 jobs:
   automation-Junit:
@@ -17,40 +13,33 @@ jobs:
     
     steps:
     - uses: actions/checkout@v4
-
-    - name: Make gradlew executable
-      run: chmod +x gradlew
-      
+   
     - name: Set up JDK 17
       uses: actions/setup-java@v4
       with:
         java-version: '17'
         distribution: 'temurin'
 
-    - name: Setup Gradle
-      uses: gradle/actions/setup-gradle@v3
-      with:
-        cache-read-only: false
-
-    - name: Build with Gradle
-      run:
-       chmod +x gradlew
-       ./gradlew build
-
     - name: Setup Chrome
-      uses: browser-actions/setup-chrome@v1.4.0
-      with:
-        chrome-version: 'latest'
+      uses: browser-actions/setup-chrome@v0.0.0
+
+    - name: Setup gradlew
+      run: chmod +x gradlew
 
     - name: Execute Cucumber Tests
-      run: ./gradlew clean test
-      env:
-        HEADLESS_MODE: true
-
+      run: ./gradlew cucumber
+      
     - name: Archive test results
       uses: actions/upload-artifact@v4.3.0
       if: always()
       with:
         name: cucumber reports
-        path: target/cucumber-reports.html
+        path: reports
+
+    - name: Deploy report to Github Pages
+      if: always()
+      uses: peaceiris/actions-gh-pages@v3.7.3
+      with:
+        PERSONAL_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        PUBLISH_DIR: reports
 
