@@ -26,6 +26,8 @@ public class LoginStep {
     public void beforeTest() {
         ChromeOptions options = new ChromeOptions(); //untuk headless atau tanpa eksekusi website
         options.addArguments("--headless");
+        options.addArguments("--no-sandbox");
+        options.addArguments("--disable-dev-shm-usage");
         WebDriverManager.chromedriver().setup();
         driver = new ChromeDriver(options);
         loginPage = new LoginPage(driver);
