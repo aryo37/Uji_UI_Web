@@ -10,6 +10,8 @@ import io.github.bonigarcia.wdm.WebDriverManager;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 import pages.LoginPage;
 
 import static org.junit.Assert.assertEquals;
@@ -22,7 +24,10 @@ public class LoginStep {
 
     @Before
     public void beforeTest() {
-        driver = WebDriverManager.chromedriver().create();
+        ChromeOptions options = new ChromeOptions(); //untuk headless atau tanpa eksekusi website
+        options.addArguments("--headless");
+        WebDriverManager.chromedriver().setup();
+        driver = new ChromeDriver(options);
         loginPage = new LoginPage(driver);
     }
 
