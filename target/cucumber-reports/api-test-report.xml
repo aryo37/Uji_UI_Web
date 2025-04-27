@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="Cucumber" time="10.65" tests="3" skipped="0" failures="0" errors="0" timestamp="2025-04-24T02:09:42.112358400Z">
-<testcase classname="Test Automation Rest Api" name="Login with valid username and password" time="6.693">
+<testsuite name="Cucumber" time="10.213" tests="4" skipped="0" failures="0" errors="0" timestamp="2025-04-25T02:13:52.157251800Z">
+<testcase classname="Test Automation Rest Api" name="Login with valid username and password" time="5.218">
 <system-out><![CDATA[
 Given user is on login page.................................................passed
 When user input username with "standard_user"...............................passed
@@ -9,7 +9,7 @@ And user click login button.................................................pass
 Then user will redirect to homepage.........................................passed
 ]]></system-out>
 </testcase>
-<testcase classname="Test Automation Rest Api" name="Login with invalid username and password" time="1.907">
+<testcase classname="Test Automation Rest Api" name="Login with invalid username and password" time="1.778">
 <system-out><![CDATA[
 Given user is on login page.................................................passed
 When user input username with "user_lain"...................................passed
@@ -18,13 +18,18 @@ And user click login button.................................................pass
 Then A message appears "Username and password do not match any user in this service".passed
 ]]></system-out>
 </testcase>
-<testcase classname="Test Automation Rest Api" name="Login with empty password" time="1.771">
+<testcase classname="Test Automation Rest Api" name="Login with empty password" time="1.765">
 <system-out><![CDATA[
 Given user is on login page.................................................passed
 When user input username with "standard_user"...............................passed
 And user input password with "".............................................passed
 And user click login button.................................................passed
 Then A message appears "Password is required"...............................passed
+]]></system-out>
+</testcase>
+<testcase classname="Test Automation Rest Api" name="Test get list data normal" time="1.18">
+<system-out><![CDATA[
+Given prepare url valid for get list data...................................passed
 ]]></system-out>
 </testcase>
 </testsuite>
