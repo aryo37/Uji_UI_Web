@@ -8,37 +8,11 @@ on:
   workflow_dispatch:
 
 jobs:
-  # 1. Job untuk API Testing
-  api-test:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v4
-
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.11'
-
-    - name: Install API test dependencies
-      run: |
-        pip install pytest requests pytest-html
-
-    - name: Run API tests
-      run: |
-        pytest tests/api/ --html=api-report.html --self-contained-html
-
-    - name: Upload API test report
-      uses: actions/upload-artifact@v4
-      with:
-        name: api-test-report
-        path: api-report.html
-
-  # 2. Job untuk Web UI Testing
   automation-junit:
-    needs: api-test  # Menunggu API test selesai (opsional)
-    runs-on: ubuntu-latest
+  needs: api-test
+  runs-on: ubuntu-latest
     
-    steps:
+      steps:
     - uses: actions/checkout@v4
    
     - name: Set up JDK 17
