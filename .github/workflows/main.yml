@@ -3,45 +3,22 @@ name: Test Automation Pipeline
 on:
   push:
     branches: [ main, develop ]
-    paths:
-      - '**.groovy'
-      - '**.gradle'
-      - '.github/workflows/**'
   pull_request:
     branches: [ main, develop ]
 
-permissions:
-   contents: read
-   packages: read
-   actions: read
-
 jobs:
   test:
-    name: Run Tests (Java ${{ matrix.java-version }})
     runs-on: ubuntu-latest
     timeout-minutes: 30
-    
-    strategy:
-      matrix:
-        java-version: ['17']
-        include:
-          - test-group: api
-            tags: '@api'
-            report-name: 'API Test Report'
-          - test-group: ui
-            tags: '@ui'
-            report-name: 'UI Test Report'
     
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
-      with:
-        fetch-depth: 0
 
-    - name: Set up JDK
+    - name: Set up JDK 17
       uses: actions/setup-java@v4
       with:
-        java-version: ${{ matrix.java-version }}
+        java-version: '17'
         distribution: 'temurin'
         cache: 'gradle'
 
@@ -51,50 +28,27 @@ jobs:
         path: |
           ~/.gradle/caches
           ~/.gradle/wrapper
-          build
-        key: ${{ runner.os }}-gradle-${{ matrix.java-version }}-${{ hashFiles('**/*.gradle*', '**/gradle.properties') }}
+        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
         restore-keys: |
-          ${{ runner.os }}-gradle-${{ matrix.java-version }}-
           ${{ runner.os }}-gradle-
 
-    - name: Setup Chrome and WebDriver
-      if: contains(matrix.tags, '@ui')
-      uses: browser-actions/setup-chrome@v2
+    - name: Set up Chrome
+      uses: actions/setup-chrome@v1
       with:
-        chrome-version: 'stable'
+        chrome-version: 'latest'
 
-    - name: Run ${{ matrix.report-name }}
+    - name: Run Tests
       run: |
         ./gradlew clean test \
-          -Dcucumber.filter.tags="${{ matrix.tags }}" \
-          -Dwebdriver.chrome.driver=/usr/local/bin/chromedriver \
           --no-daemon \
           --stacktrace \
-          --info
+          --info \
+          -Dwebdriver.chrome.driver=/usr/local/bin/chromedriver
 
     - name: Upload test results
       uses: actions/upload-artifact@v4
       with:
-        name: test-results-${{ matrix.test-group }}-jdk${{ matrix.java-version }}
+        name: test-results
         path: |
           build/test-results/test/**
           build/reports/tests/test/**
-        if-no-files-found: warn  
-
-    - name: Publish Test Report
-      uses: mikepenz/action-junit-report@v3
-      if: always()
-      with:
-        report_paths: '**/build/test-results/test/TEST-*.xml'
-        check_name: ${{ matrix.report-name }} (JDK ${{ matrix.java-version }})
-        fail_on_failure: false
-
-    - name: Notify Slack
-      if: failure()
-      uses: rtCamp/action-slack-notify@v2
-      env:
-        SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
-        SLACK_COLOR: ${{ job.status }}
-        SLACK_TITLE: "Test Failed: ${{ matrix.report-name }} (JDK ${{ matrix.java-version }})"
-        SLACK_MESSAGE: "Build ${{ github.run_number }} failed in ${{ github.workflow }}"
-        SLACK_USERNAME: GitHub Actions
