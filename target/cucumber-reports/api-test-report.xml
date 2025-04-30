@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="Cucumber" time="40.092" tests="6" skipped="0" failures="0" errors="0" timestamp="2025-04-30T04:01:39.230650500Z">
-<testcase classname="Test Automation Rest Api dan Web UI" name="Login with valid username and password" time="10.229">
+<testsuite name="Cucumber" time="54.789" tests="6" skipped="0" failures="0" errors="0" timestamp="2025-04-30T05:40:22.362880800Z">
+<testcase classname="Test Automation Rest Api dan Web UI" name="Login with valid username and password" time="20.069">
 <system-out><![CDATA[
 Given user is on login page.................................................passed
 When user input username with "standard_user"...............................passed
@@ -9,7 +9,7 @@ And user click login button.................................................pass
 Then user will redirect to homepage.........................................passed
 ]]></system-out>
 </testcase>
-<testcase classname="Test Automation Rest Api dan Web UI" name="Login with invalid username and password" time="3.818">
+<testcase classname="Test Automation Rest Api dan Web UI" name="Login with invalid username and password" time="5.299">
 <system-out><![CDATA[
 Given user is on login page.................................................passed
 When user input username with "user_lain"...................................passed
@@ -18,7 +18,7 @@ And user click login button.................................................pass
 Then A message appears "Username and password do not match any user in this service".passed
 ]]></system-out>
 </testcase>
-<testcase classname="Test Automation Rest Api dan Web UI" name="Login with empty password" time="4.698">
+<testcase classname="Test Automation Rest Api dan Web UI" name="Login with empty password" time="5.206">
 <system-out><![CDATA[
 Given user is on login page.................................................passed
 When user input username with "standard_user"...............................passed
@@ -27,7 +27,7 @@ And user click login button.................................................pass
 Then A message appears "Password is required"...............................passed
 ]]></system-out>
 </testcase>
-<testcase classname="Test Automation Rest Api dan Web UI" name="Test get list data normal" time="15.084">
+<testcase classname="Test Automation Rest Api dan Web UI" name="Test get list data normal" time="15.287">
 <system-out><![CDATA[
 Given prepare url valid for "GET_LIST_USERS"................................passed
 And hit api get list users..................................................passed
@@ -36,7 +36,7 @@ Then validation response body get list users................................pass
 Then validation response json with JSONSchema "get_list_users_normal.json"..passed
 ]]></system-out>
 </testcase>
-<testcase classname="Test Automation Rest Api dan Web UI" name="Test create new user normal" time="2.723">
+<testcase classname="Test Automation Rest Api dan Web UI" name="Test create new user normal" time="3.482">
 <system-out><![CDATA[
 Given prepare url valid for "CREATE_NEW_USERS"..............................passed
 And hit api post create new user............................................passed
@@ -45,7 +45,7 @@ Then validation response body create new user...............................pass
 Then validation response json with JSONSchema "create_users_normal.json"....passed
 ]]></system-out>
 </testcase>
-<testcase classname="Test Automation Rest Api dan Web UI" name="Test delete user normal" time="3.079">
+<testcase classname="Test Automation Rest Api dan Web UI" name="Test delete user normal" time="4.701">
 <system-out><![CDATA[
 Given prepare url valid for "GET_LIST_USERS"................................passed
 And hit api get list users..................................................passed
