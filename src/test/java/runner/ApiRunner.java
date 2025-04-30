@@ -15,7 +15,7 @@ import org.junit.runner.RunWith;
 
         glue = {"stepDef"},
         features = {"src/test/java/features"},
-        tags = "@api",
+        tags = "@api or @ui",
         monochrome = true
 )
 public class ApiRunner {

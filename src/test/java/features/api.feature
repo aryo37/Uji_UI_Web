@@ -1,6 +1,6 @@
-Feature: Test Automation Rest Api
+Feature: Test Automation Rest Api dan Web UI
 
-  @api
+  @ui
   Scenario: Login with valid username and password
     Given user is on login page
     When user input username with "standard_user"
@@ -8,7 +8,7 @@ Feature: Test Automation Rest Api
     And user click login button
     Then user will redirect to homepage
 
-  @api
+  @ui
   Scenario: Login with invalid username and password
     Given user is on login page
     When user input username with "user_lain"
@@ -16,7 +16,7 @@ Feature: Test Automation Rest Api
     And user click login button
     Then A message appears "Username and password do not match any user in this service"
 
-  @api
+  @ui
   Scenario: Login with empty password
     Given user is on login page
     When user input username with "standard_user"
