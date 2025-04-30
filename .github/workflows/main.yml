@@ -1,46 +1,99 @@
-name: Combine API dan UI Test Workflow
+name: Test Automation Pipeline
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ main, develop ]
+    paths:
+      - '**.groovy'
+      - '**.gradle'
+      - '.github/workflows/**'
   pull_request:
-    branches: [ "main" ]
-  workflow_dispatch:
+    branches: [ main, develop ]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
-  automation-junit:
+  test:
+    name: Run Tests (Java ${{ matrix.java-version }})
     runs-on: ubuntu-latest
+    timeout-minutes: 30
+    
+    strategy:
+      matrix:
+        java-version: ['11', '17']
+        include:
+          - test-group: api
+            tags: '@api'
+            report-name: 'API Test Report'
+          - test-group: ui
+            tags: '@ui'
+            report-name: 'UI Test Report'
     
     steps:
-    - uses: actions/checkout@v4
-   
-    - name: Set up JDK 17
-      uses: actions/setup-java@v4
+    - name: Checkout code
+      uses: actions/checkout@v4
       with:
-        java-version: '17'
+        fetch-depth: 0
+
+    - name: Set up JDK ${{ matrix.java-version }}
+      uses: actions/setup-java@v3
+      with:
+        java-version: ${{ matrix.java-version }}
         distribution: 'temurin'
+        cache: 'gradle'
 
-    - name: Setup Chrome
-      uses: browser-actions/setup-chrome@latest
+    - name: Cache Gradle dependencies
+      uses: actions/cache@v3
+      with:
+        path: |
+          ~/.gradle/caches
+          ~/.gradle/wrapper
+          build
+        key: ${{ runner.os }}-gradle-${{ matrix.java-version }}-${{ hashFiles('**/*.gradle*', '**/gradle.properties') }}
+        restore-keys: |
+          ${{ runner.os }}-gradle-${{ matrix.java-version }}-
+          ${{ runner.os }}-gradle-
 
-    - name: Setup gradlew
-      run: chmod +x gradlew
+    - name: Setup Chrome and WebDriver
+      if: contains(matrix.tags, '@ui')
+      uses: browser-actions/setup-chrome@v1
+      with:
+        chrome-version: 'latest'
 
-    - name: Execute Cucumber Tests
-      run: ./gradlew cucumber
-      
-    - name: Archive test results
-      uses: actions/upload-artifact@v4
+    - name: Run ${{ matrix.report-name }}
+      run: |
+        ./gradlew clean test \
+          -Dcucumber.filter.tags="${{ matrix.tags }}" \
+          -Dwebdriver.chrome.driver=/usr/local/bin/chromedriver \
+          --no-daemon \
+          --stacktrace \
+          --info
+
+    - name: Upload test results
+      uses: actions/upload-artifact@v3
+      with:
+        name: test-results-${{ matrix.test-group }}-jdk${{ matrix.java-version }}
+        path: |
+          build/test-results/test/**
+          build/reports/tests/test/**
+          target/surefire-reports/**
+
+    - name: Publish Test Report
+      uses: mikepenz/action-junit-report@v3
       if: always()
       with:
-        name: cucumber-reports
-        path: reports
+        report_paths: '**/build/test-results/test/TEST-*.xml'
+        check_name: ${{ matrix.report-name }} (JDK ${{ matrix.java-version }})
+        fail_on_failure: false
 
-    - name: Deploy report to Github Pages
-      if: always()
-      uses: peaceiris/actions-gh-pages@v3.9.3
-      with:
-        github_token: ${{ secrets.Cth }}
-        publish_dir: ./reports
-        force_orphan: true
-        keep_files: false
+    - name: Notify Slack
+      if: failure()
+      uses: rtCamp/action-slack-notify@v2
+      env:
+        SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+        SLACK_COLOR: ${{ job.status }}
+        SLACK_TITLE: "Test Failed: ${{ matrix.report-name }} (JDK ${{ matrix.java-version }})"
+        SLACK_MESSAGE: "Build ${{ github.run_number }} failed in ${{ github.workflow }}"
+        SLACK_USERNAME: GitHub Actions
